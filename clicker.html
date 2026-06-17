@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body style="text-align:center;font-family:Arial">
+<h1>🖱 Кликер</h1>
+
+<h2 id="score">0</h2>
+
+<button onclick="add()" style="font-size:40px">
+ЖМИ!
+</button>
+
+<script>
+let score=0;
+
+function add(){
+ score++;
+ document.getElementById("score").innerText=score;
+}
+</script>
+
+</body>
+</html>
