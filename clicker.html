@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ретро Кликер Симулятор Mobile</title>
+    <title>Кликер</title>
     <style>
         :root {
             --bg-color: #0f111a;
@@ -15,7 +15,7 @@
 
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* Убирает синюю рамку при тапе на смартфонах */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -31,7 +31,6 @@
             user-select: none;
         }
 
-        /* Главный контейнер игры (Адаптивный под мобилки) */
         .game-container {
             display: flex;
             width: 100%;
@@ -45,7 +44,6 @@
             transition: height 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Универсальные стили секций */
         .levels-menu, .shop-menu {
             width: 260px;
             background: rgba(0, 0, 0, 0.3);
@@ -53,7 +51,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            overflow-y: auto; /* Скролл, если на маленьком экране не влезает */
+            overflow-y: auto;
         }
 
         .levels-menu { border-right: 2px solid rgba(255, 230, 0, 0.2); }
@@ -69,7 +67,6 @@
         .levels-menu h3 { color: var(--main-color); }
         .shop-menu h3 { color: var(--accent-color); }
 
-        /* Кнопки локаций */
         .level-btn {
             background: #2d324d;
             color: #fff;
@@ -101,7 +98,6 @@
             margin-top: 4px;
         }
 
-        /* Центральная зона клика */
         .click-zone {
             flex: 1;
             display: flex;
@@ -111,6 +107,27 @@
             padding: 20px;
             position: relative;
             background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0) 70%);
+        }
+
+        .global-exit-btn {
+            background: var(--accent-color);
+            color: white;
+            border: 2px solid #ffffff;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 0, 85, 0.3);
+            transition: all 0.2s;
+            text-align: center;
+            width: 90%;
+            max-width: 250px;
+            margin-bottom: 5px;
+        }
+        .global-exit-btn:hover {
+            background: #b91c1c;
+            transform: scale(1.03);
         }
 
         .stats { text-align: center; }
@@ -135,7 +152,6 @@
             border-radius: 20px;
         }
 
-        /* Большая Кнопка Тапа (Оптимизирована под пальцы) */
         .click-target {
             width: 160px;
             height: 160px;
@@ -148,7 +164,7 @@
             box-shadow: 0 0 35px rgba(255, 230, 0, 0.4);
             transition: transform 0.05s, background-color 0.3s, box-shadow 0.3s;
             position: relative;
-            touch-action: manipulation; /* Убирает 300мс задержки клика на мобилках */
+            touch-action: manipulation;
         }
 
         .click-target:active:not(.banned) {
@@ -163,7 +179,6 @@
             letter-spacing: 1px;
         }
 
-        /* Стили бана */
         .click-target.banned {
             background: var(--accent-color) !important;
             box-shadow: 0 0 35px rgba(255, 0, 85, 0.6) !important;
@@ -176,7 +191,6 @@
             font-size: 20px;
         }
 
-        /* Карточки Апгрейдов */
         .shop-item {
             background: #2d324d;
             border: 2px solid #444b73;
@@ -202,7 +216,6 @@
         .shop-item-cost { color: var(--main-color); font-weight: bold; }
         .shop-item-desc { font-size: 11px; color: #a8b2d1; }
 
-        /* Цифры клика */
         .floating-text {
             position: absolute;
             color: var(--main-color);
@@ -219,7 +232,6 @@
             100% { transform: translateY(-70px) scale(0.8); opacity: 0; }
         }
 
-        /* ================= MOBILE АДАПТИВ (Меньше 768px) ================= */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -227,25 +239,23 @@
             }
 
             .game-container {
-                flex-direction: column; /* Перестраиваем всё в колонку сверху вниз */
+                flex-direction: column;
                 height: auto;
                 min-height: calc(100vh - 10px);
                 border-width: 3px;
             }
 
-            /* Зона клика теперь сверху, чтобы кнопка была сразу видна */
             .click-zone {
                 order: 1;
                 width: 100%;
-                height: 320px;
+                height: 360px;
                 padding: 15px;
                 border-bottom: 2px solid rgba(255, 230, 0, 0.15);
             }
 
             .score-display { font-size: 34px; }
-            .click-target { width: 140px; height: 140px; }
+            .click-target { width: 130px; height: 130px; }
 
-            /* Блок локаций (делаем горизонтальным скроллом, чтобы экономить место) */
             .levels-menu {
                 order: 2;
                 width: 100%;
@@ -259,7 +269,7 @@
             }
 
             .levels-menu h3, .shop-menu h3 {
-                display: none; /* Прячем заголовки на мобилках для экономии места */
+                display: none;
             }
 
             .level-btn {
@@ -269,7 +279,6 @@
                 font-size: 13px;
             }
 
-            /* Блок апгрейдов идет в самый низ */
             .shop-menu {
                 order: 3;
                 width: 100%;
@@ -309,6 +318,8 @@
     </div>
 
     <div class="click-zone" id="clickZone">
+        <button class="global-exit-btn" onclick="goToIndex()">🚪 Выйти на главный сайт</button>
+
         <div class="stats">
             <div class="score-display" id="score">0</div>
             <div class="cps-display">Авто-клик: <span id="cps">0</span>/сек</div>
@@ -371,7 +382,10 @@
         ]
     };
 
-    // Защита: Бан на 30 секунд за 20+ тапов в секунду
+    function goToIndex() {
+        window.location.href = "index.html";
+    }
+
     let clickTimestamps = []; 
     let isBanned = false; 
     let banTimer = 0;
@@ -380,17 +394,15 @@
     const scoreDiv = document.getElementById('score');
     const cpsDiv = document.getElementById('cps');
 
-    // Обработчик события клика/тапа
     target.addEventListener('mousedown', (e) => handleTap(e));
     target.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // Предотвращает дублирование клика mousedown на телефонах
+        e.preventDefault();
         handleTap(e.touches[0]);
     });
 
     function handleTap(e) {
         if (isBanned) return;
 
-        // Анти-кликер код
         if (e.isTrusted === false) {
             triggerBan(30); 
             return;
@@ -398,18 +410,14 @@
 
         const currentTime = Date.now();
         clickTimestamps.push(currentTime);
-
-        // Фильтруем клики старше 1 секунды
         clickTimestamps = clickTimestamps.filter(timestamp => currentTime - timestamp <= 1000);
 
-        // Проверка лимита: если больше 20 кликов в секунду -> бан 30 сек
         if (clickTimestamps.length > 20) {
             triggerBan(30); 
             createFloatingText(e, "БАН 30 СЕК!", true);
             return;
         }
 
-        // Начисление монет
         let gain = state.clickPower * state.currentMultiplier;
         state.score += gain;
         
@@ -447,7 +455,6 @@
         fText.classList.add('floating-text');
         fText.innerText = text;
         
-        // Расчет координат под курсор или палец
         const x = e.clientX - rect.left + target.offsetLeft - target.offsetWidth/2;
         const y = e.clientY - rect.top + target.offsetTop - target.offsetHeight/2;
         
@@ -546,7 +553,6 @@
         });
     }
 
-    // Пассивный доход
     setInterval(() => {
         if (state.cps > 0) {
             state.score += (state.cps * state.currentMultiplier);

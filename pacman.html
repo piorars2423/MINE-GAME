@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Pac-Man: Управление и Призраки</title>
+    <title>Pac-Man</title>
     <style>
         body {
             background-color: #111;
@@ -56,7 +56,6 @@
         #score, #power-timer { font-size: 20px; margin-bottom: 5px; font-weight: bold; }
         #power-timer { color: #ffffff; text-shadow: 0 0 5px #fff; height: 25px; }
         
-        /* Адаптивный холст */
         canvas { 
             border: 4px solid blue; 
             background-color: black; 
@@ -71,7 +70,48 @@
             margin-top: 10px;
         }
 
-        /* Виртуальный джойстик для мобилок */
+        /* Кнопки выхода */
+        .exit-btn {
+            background: #ef4444; 
+            border: 2px solid #ffffff; 
+            color: white;
+            font-size: 14px; 
+            padding: 8px 15px; 
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .exit-btn:hover {
+            background: #b91c1c;
+            transform: scale(1.05);
+        }
+        .back-menu-btn {
+            background: #eab308;
+            border: 2px solid #ffffff;
+            color: black;
+            font-size: 14px;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .back-menu-btn:hover {
+            background: #ca8a04;
+            transform: scale(1.05);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        /* Виртуальный джойстик */
         #mobile-controls {
             display: none;
             grid-template-columns: repeat(3, 60px);
@@ -100,14 +140,9 @@
         #joy-right { grid-column: 3; grid-row: 2; }
         #joy-down { grid-column: 2; grid-row: 3; }
 
-        /* Стили для экранов смартфонов */
         @media (max-width: 768px) {
-            #mobile-controls {
-                display: grid; /* Показываем только на мобильных */
-            }
-            #menu, #game-container {
-                padding: 12px;
-            }
+            #mobile-controls { display: grid; }
+            #menu, #game-container { padding: 12px; }
             h1 { font-size: 22px; }
             .btn { padding: 10px 15px; font-size: 14px; }
         }
@@ -116,6 +151,8 @@
 <body>
 
     <div id="menu">
+        <button class="exit-btn" onclick="goToIndex()" style="margin-bottom: 20px; width: 100%;">Выйти на главный сайт</button>
+        
         <h1>PAC-MAN МЕНЮ</h1>
         <button class="btn" id="btn-lvl1" onclick="startGame(1)">Уровень 1 (Легкий)</button>
         <button class="btn" id="btn-lvl2" onclick="startGame(2)" disabled>Уровень 2 (Нормальный) 🔒</button>
@@ -123,7 +160,11 @@
     </div>
 
     <div id="game-container">
-        <div id="score">Очки: 0</div>
+        <div class="top-bar">
+            <div id="score">Очки: 0</div>
+            <button class="back-menu-btn" onclick="backToMenu()">🔙 В меню уровней</button>
+        </div>
+        
         <div id="power-timer"></div>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         
@@ -136,8 +177,8 @@
 
         <div id="game-over-screen">
             <button id="restartBtn" class="btn" onclick="resetGame()">Играть снова</button>
+            <button class="btn" onclick="backToMenu()" style="background-color: #333; border-color: #fff;">В меню уровней</button>
         </div>
-        <button class="btn" onclick="backToMenu()" style="background: #333; border: none; font-size: 14px; padding: 8px 15px; margin-top: 10px;">В меню</button>
     </div>
 
     <script>
@@ -145,7 +186,6 @@
         const ctx = canvas.getContext("2d");
         const scoreElement = document.getElementById("score");
         const timerElement = document.getElementById("power-timer");
-        const restartBtn = document.getElementById("restartBtn");
         const gameOverScreen = document.getElementById("game-over-screen");
         const menu = document.getElementById("menu");
         const gameContainer = document.getElementById("game-container");
@@ -247,6 +287,22 @@
             ]
         };
 
+        // СКРИПТ №1: ВЫХОД ИЗ ИГРЫ НА ВНЕШНИЙ САЙТ INDEX.HTML
+        function goToIndex() {
+            clearInterval(powerInterval);
+            clearInterval(gameInterval);
+            window.location.href = "index.html"; 
+        }
+
+        // СКРИПТ №2: ВОЗВРАТ ИЗ КАТКИ НА ЭКРАН ВЫБОРА УРОВНЕЙ ПАКМЕНА
+        function backToMenu() {
+            clearInterval(powerInterval);
+            clearInterval(gameInterval);
+            updateMenuButtons();
+            menu.style.display = "flex";
+            gameContainer.style.display = "none";
+        }
+
         function updateMenuButtons() {
             document.getElementById("btn-lvl2").disabled = !unlockedLevels[2];
             document.getElementById("btn-lvl2").innerText = unlockedLevels[2] ? "Уровень 2 (Нормальный)" : "Уровень 2 (Нормальный) 🔒";
@@ -260,14 +316,6 @@
             menu.style.display = "none";
             gameContainer.style.display = "flex";
             initGame();
-        }
-
-        function backToMenu() {
-            clearInterval(powerInterval);
-            clearInterval(gameInterval);
-            updateMenuButtons();
-            menu.style.display = "flex";
-            gameContainer.style.display = "none";
         }
 
         function initGame() {
@@ -367,26 +415,22 @@
             return true;
         }
 
-        // КЛАВИАТУРА (ПК)
         window.addEventListener("keydown", (e) => {
-            const key = e.key.toLowerCase();
-            if (e.key === "ArrowUp" || key === "w" || key === "ц") { pacman.nextDx = 0; pacman.nextDy = -1; }
-            if (e.key === "ArrowDown" || key === "s" || key === "ы") { pacman.nextDx = 0; pacman.nextDy = 1; }
-            if (e.key === "ArrowLeft" || key === "a" || key === "ф") { pacman.nextDx = -1; pacman.nextDy = 0; }
-            if (e.key === "ArrowRight" || key === "d" || key === "в") { pacman.nextDx = 1; pacman.nextDy = 0; }
+            if (e.code === "ArrowUp" || e.code === "KeyW") { pacman.nextDx = 0; pacman.nextDy = -1; }
+            if (e.code === "ArrowDown" || e.code === "KeyS") { pacman.nextDx = 0; pacman.nextDy = 1; }
+            if (e.code === "ArrowLeft" || e.code === "KeyA") { pacman.nextDx = -1; pacman.nextDy = 0; }
+            if (e.code === "ArrowRight" || e.code === "KeyD") { pacman.nextDx = 1; pacman.nextDy = 0; }
         });
 
-        // СЕНСОРНЫЙ ДЖОЙСТИК (МОБИЛКИ)
-        document.getElementById("joy-up").addEventListener("touchstart", (e) => { e.preventDefault(); pacman.nextDx = 0; pacman.nextDy = -1; });
-        document.getElementById("joy-down").addEventListener("touchstart", (e) => { e.preventDefault(); pacman.nextDx = 0; pacman.nextDy = 1; });
-        document.getElementById("joy-left").addEventListener("touchstart", (e) => { e.preventDefault(); pacman.nextDx = -1; pacman.nextDy = 0; });
-        document.getElementById("joy-right").addEventListener("touchstart", (e) => { e.preventDefault(); pacman.nextDx = 1; pacman.nextDy = 0; });
-        
-        // Дублирование кликами для удобного тестирования мобильной версии на ПК через DevTools
-        document.getElementById("joy-up").addEventListener("click", () => { pacman.nextDx = 0; pacman.nextDy = -1; });
-        document.getElementById("joy-down").addEventListener("click", () => { pacman.nextDx = 0; pacman.nextDy = 1; });
-        document.getElementById("joy-left").addEventListener("click", () => { pacman.nextDx = -1; pacman.nextDy = 0; });
-        document.getElementById("joy-right").addEventListener("click", () => { pacman.nextDx = 1; pacman.nextDy = 0; });
+        const setupJoy = (id, dx, dy) => {
+            const btn = document.getElementById(id);
+            btn.addEventListener("touchstart", (e) => { e.preventDefault(); pacman.nextDx = dx; pacman.nextDy = dy; });
+            btn.addEventListener("click", () => { pacman.nextDx = dx; pacman.nextDy = dy; });
+        };
+        setupJoy("joy-up", 0, -1);
+        setupJoy("joy-down", 0, 1);
+        setupJoy("joy-left", -1, 0);
+        setupJoy("joy-right", 1, 0);
 
         function updateGame() {
             if (gameOver || gameWon) return;
@@ -576,10 +620,10 @@
                 if (gameWon) {
                     ctx.fillStyle = "#00ff00";
                     ctx.font = "bold 24px Arial";
-                    ctx.fillText("УРОВЕНЬ ПРОЙДЕН!", canvas.width / 2, canvas.height / 2);
+                    ctx.fillText("УРОВЕНЬ ПРОЙДЕН!", canvas.width / 2, canvas.height / 2 - 10);
                     ctx.fillStyle = "white";
                     ctx.font = "12px Arial";
-                    ctx.fillText("Следующий уровень разблокирован в меню!", canvas.width / 2, canvas.height / 2 + 35);
+                    ctx.fillText("Следующий уровень разблокирован в меню!", canvas.width / 2, canvas.height / 2 + 25);
                 } else {
                     ctx.fillStyle = "red";
                     ctx.font = "bold 28px Arial";
